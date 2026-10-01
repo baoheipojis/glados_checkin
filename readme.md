@@ -19,7 +19,7 @@ GitHub Actions 实现 [GLaDOS][glados] 自动签到
 
 1. 启用 Actions, 每天北京时间 00:10 自动签到
 
-    - Cookie 有效期约 10 天, 过期后签到会返回 `没有权限 (code=-2)`, 需重新登录并更新 `GLADOS`
+    - Cookie 有效期约 14 天(自上次浏览器登录起算), 过期后签到会返回 `没有权限 (code=-2)`, 需重新登录并更新 `GLADOS`
     - 建议配置 `NOTIFY`, 否则过期后会静默失败, 直到你某天自己发现
 
 1. 返回码说明: `code=0` 签到成功并加分; `code=1` 当天已签到(本次 0 分, 视为正常); `code=-2` cookie 无效或已过期; `code=4 device-mismatch` UA 被判定为自动化程序
