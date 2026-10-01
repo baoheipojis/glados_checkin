@@ -17,14 +17,21 @@ const glados = async () => {
         headers: { ...common, 'content-type': 'application/json' },
         body: JSON.stringify({ token: domain }),
       }).then((r) => r.json())
-      if (action?.code) throw new Error(`${action?.message} (code=${action?.code}${action?.reason ? ', reason=' + action.reason : ''})`)
+      // code=1: 当天已签到(本次 0 分), 属正常状态, 不算失败; code=-2: 没有权限, 通常是 cookie 过期
+      const alreadyChecked = action?.code === 1
+      if (action?.code && !alreadyChecked) {
+        throw new Error(
+          `${action?.message} (code=${action?.code}${action?.reason ? ', reason=' + action.reason : ''})` +
+            (action?.code === -2 ? ' — cookie 可能已过期, 请重新登录后更新 GLADOS / GLADOS_UA secret' : '')
+        )
+      }
       const status = await fetch(`https://${domain}/api/user/status`, {
         method: 'GET',
         headers: { ...common },
       }).then((r) => r.json())
       if (status?.code) throw new Error(status?.message)
       notice.push(
-        'Checkin OK',
+        alreadyChecked ? 'Checkin OK (already today)' : 'Checkin OK',
         `${action?.message}`,
         `Left Days ${Number(status?.data?.leftDays)}`
       )
